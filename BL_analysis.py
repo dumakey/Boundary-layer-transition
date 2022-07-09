@@ -208,7 +208,7 @@ def plot_Re(Re, x, x_c, Re_crit, theta, export_dir):
     fig.savefig(os.path.join(export_folder, 'Re_%s_profiles_%s.png' %(theta,x_c)), dpi=200)
     plt.close()
 
-def plot_BL_velocity_component(V, x, z, x_c, magnitude, export_dir=None):
+def plot_magnitude(V, x, z, x_c, magnitude, export_dir=None):
     '''
     Function to plot the evolution of one component of the velocity at the boundary layer region
     :param V: (array) component to be plotted
@@ -231,8 +231,9 @@ def plot_BL_velocity_component(V, x, z, x_c, magnitude, export_dir=None):
         ax.set_xlabel('$%s\,$' %magnitude)
         ax.plot(V[:,i],z[:,i],'b')
         ax.grid()
-        fig.suptitle('$x/c\,=\,$%s\n$x\,=\,$%.4f' %(x_c,x[i]))
-        fig.savefig(os.path.join(export_folder, '%s_x=%.4f_%s_blprofile.png' %(x_c,x[i],magnitude)), dpi=200)
+        fig.suptitle('%s component evolution\n$x/c\,=\,$%s, chordwise coordinate $x\,=\,$%.4f'
+                     %(magnitude,x_c,x[i]))
+        fig.savefig(os.path.join(export_folder, '%s_evolution_x_c=%s_x=%.2f.png' %(magnitude,x_c,x[i])), dpi=200)
         plt.close()
 
 def plot_BL_velocity_profiles(casepath):
@@ -258,11 +259,13 @@ def plot_BL_velocity_profiles(casepath):
     # Read snapshots
     snapshots_data_dir = os.path.join(casepath, 'Postprocessing', 'BL_analysis', 'snapshots_structured')
     sides = os.listdir(snapshots_data_dir)
+    print('Beginning to plot BL velocity profiles...')
     for side in sides:
+        print('--- Airfoil side: %s' %side)
         snapshot_segments = os.listdir(os.path.join(snapshots_data_dir, side))
-
+        print('Segment of analysis:')
         for _, x_c in enumerate(snapshot_segments):  # loop over each segment
-            print('Segment in chord: ' + x_c + '\n')
+            print('   > x/c: ' + x_c)
 
             # Read normals
             normals_filepath = [os.path.join(grid_normals_dir, side, x_c, file) for file in
@@ -307,10 +310,12 @@ def plot_BL_velocity_profiles(casepath):
 
             # tangent-component of velocity profile
             u_filt, x_filt = filter_nan(u,x)
-            plot_BL_velocity_component(u_filt,x_filt,z,x_c,'u',export_folder)
+            plot_magnitude(u_filt,x_filt,z,x_c,'u',export_folder)
             # normal-component of velocity profile
             w_filt, x_filt = filter_nan(w,x)
-            plot_BL_velocity_component(w_filt,x_filt,z,x_c,'w',export_folder)
+            plot_magnitude(w_filt,x_filt,z,x_c,'w',export_folder)
+
+    print('Plots generated and storaged.')
 
 def plot_BL_scalar_profiles(casepath, variable):
     '''
@@ -323,19 +328,18 @@ def plot_BL_scalar_profiles(casepath, variable):
     if not os.path.exists(export_folder):
         os.makedirs(export_folder)
 
-    # Read snapshots
     snapshots_data_dir = os.path.join(casepath, 'Postprocessing', 'BL_analysis', 'snapshots_structured')
     sides = os.listdir(snapshots_data_dir)
+    print('Beginning to plot BL magnitude...')
     for side in sides:
+        print('--- Airfoil side: %s' % side)
         snapshot_segments = os.listdir(os.path.join(snapshots_data_dir, side))
-
+        print('    Segment of analysis:')
         for _, x_c in enumerate(snapshot_segments):  # loop over each segment
-            print('Segment in chord: ' + x_c + '\n')
-
+            print('    > x/c: ' + x_c)
             # Read input snapshot data
             snapshot_data_files = [file for file in os.listdir(os.path.join(snapshots_data_dir, side, x_c))
                                    if file.endswith('.csv')]
-
             # Allocate dmd data container
             Ndmd_x = len(snapshot_data_files)  # number of planes in chordwise direction
             f = open(os.path.join(snapshots_data_dir, side, x_c, snapshot_data_files[0]), 'r')
@@ -360,7 +364,8 @@ def plot_BL_scalar_profiles(casepath, variable):
                 p[:,i] = np.reshape(snapshot_data[variable].to_numpy().T,(Ndmd_z,))
 
             p_filt, x_filt = filter_nan(p,x)
-            plot_BL_velocity_component(p_filt,x_filt,z,x_c,variable,export_folder)
+            plot_magnitude(p_filt,x_filt,z,x_c,variable,export_folder)
+    print('Plots generated and storaged.')
 
 def generate_snapshot_grid(casepath, plane_segment_coords, grid_parameters):
     '''
@@ -1015,6 +1020,7 @@ for (ID, casepath) in cases.items():
     #generate_snapshot_data(casepath,variables=snapshot_variables,dymform='D')
     #compute_BL_thickness(casepath,reference_data=False,plot=True)
     #compute_transition(casepath,freestream_conditions,Re_cr)
-    plot_BL_velocity_profiles(casepath)
+    #plot_BL_velocity_profiles(casepath)
     #plot_BL_scalar_profiles(casepath,'T')
-    #plot_BL_scalar_profiles(casepath,'P')
+    plot_BL_scalar_profiles(casepath,'P')
+    print()
