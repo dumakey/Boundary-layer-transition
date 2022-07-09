@@ -955,11 +955,7 @@ def compute_Euler_freestream_conditions(casepath):
 #################################################### INPUTS ############################################################
 
 cases = {
-    #'NLF0416': r'E:\Proyectos\boundary layer transition\Cases\NLF0416_laminar',
-    #'NLF0416': r'C:\Users\juan.ramos\Altran\Proyectos\Transition\BL_transition\Cases\NLF0416_laminar',
-    #'NLF0416': r'E:\Proyectos\boundary layer transition\Cases\NLF0416_RANS',
-    #'NLF0416': r'E:\Proyectos\boundary layer transition\Cases\NLF0416_Euler',
-    'NLF0416_M03': r'C:\Users\juan.ramos\Altran\Proyectos\Transition\BL_transition\Cases\NLF0416_M03_A203',
+    'NLF0416_M03': r'C:\Users\BL_transition\Cases\NLF0416_M03_A203',
 }
 
 
@@ -1015,14 +1011,10 @@ Re_cr = {
 }
 
 for (ID, casepath) in cases.items():
-    #generate_snapshot_grid(casepath,plane_segment_coords,grid_parameters)
-    #generate_snapshot_data(casepath,variables=snapshot_variables,dymform='D')
+    generate_snapshot_grid(casepath,plane_segment_coords,grid_parameters)
+    generate_snapshot_data(casepath,variables=snapshot_variables,dymform='D')
     compute_BL_thickness(casepath,reference_data=False,plot=True)
-    #compute_Euler_freestream_conditions(casepath)
-    #compute_transition(casepath,freestream_conditions,Re_cr)
-
-    #plot_BL_velocity_profiles(casepath)
-    #plot_BL_scalar_profiles(casepath,'T')
-    #plot_BL_scalar_profiles(casepath,'P')
-
-    print()
+    compute_transition(casepath,freestream_conditions,Re_cr)
+    plot_BL_velocity_profiles(casepath)
+    plot_BL_scalar_profiles(casepath,'T')
+    plot_BL_scalar_profiles(casepath,'P')
