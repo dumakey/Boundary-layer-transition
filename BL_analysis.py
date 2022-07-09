@@ -899,7 +899,9 @@ def compute_Euler_freestream_conditions(casepath):
 
     # Read snapshots
     sides = os.listdir(euler_folder)
+    print('Beginning to plot BL velocity profiles...')
     for side in sides:
+        print('--- Airfoil side: %s' % side)
         # Set browsing folder
         structured_data_export_folder = os.listdir(os.path.join(euler_folder,side))
         # Set export folders
@@ -910,8 +912,9 @@ def compute_Euler_freestream_conditions(casepath):
         if not os.path.exists(rhoe_folder):
             os.makedirs(rhoe_folder)
 
+        print('   Segment of analysis:')
         for _, x_c in enumerate(structured_data_export_folder):  # loop over each segment
-            print('Segment in chord: ' + x_c + '\n')
+            print('   > x/c: ' + x_c)
 
             # Read normals
             normals_filepath = [os.path.join(grid_normals_dir,side,x_c,file) for file in os.listdir(os.path.join(grid_normals_dir,side,x_c))][0]
