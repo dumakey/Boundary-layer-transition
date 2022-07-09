@@ -806,10 +806,11 @@ def compute_transition(casepath, freestream_conditions, Re_cr):
         rmtree(export_folder)
     os.makedirs(export_folder)
 
+    print('Beginning to compute boundary layer transition...')
     snapshots_data_dir = os.path.join(casepath,'Postprocessing','BL_analysis','snapshots_structured')
     sides = os.listdir(snapshots_data_dir)
     for side in sides:
-        print('Airfoil side: ' + side + '\n')
+        print('Airfoil side: ' + side)
         delta_dir = os.path.join(casepath,'Postprocessing','BL_analysis','BL_thickness')
         delta1_files = [os.path.join(delta_dir,'delta1',side,file) for file in os.listdir(os.path.join(delta_dir,'delta1',side)) if file.endswith('.csv')]
         delta2_files = [os.path.join(delta_dir,'delta2',side,file) for file in os.listdir(os.path.join(delta_dir,'delta2',side)) if file.endswith('.csv')]
@@ -874,7 +875,7 @@ def compute_transition(casepath, freestream_conditions, Re_cr):
             plot_Re(Re_theta1,x,x_c[i],Re_cr[side]['theta1'],'theta1',Re_theta1_folder)
             plot_Re(Re_theta2,x,x_c[i],Re_cr[side]['theta2'],'theta2',Re_theta2_folder)
 
-        print()
+    print('Transition computed, plots generated.')
 
 def compute_Euler_freestream_conditions(casepath):
     '''
