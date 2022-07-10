@@ -754,3 +754,4 @@ for (ID, case) in cases.items():
     DMD_analyzer.generate_snapshot_grid()
     DMD_analyzer.generate_snapshot_data(dymform='D')
     DMD_analyzer.dmd_analysis(export=True)
+    # esto es una prueba para el merge
