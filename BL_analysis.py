@@ -208,10 +208,10 @@ def plot_Re(Re, x, x_c, Re_crit, theta, export_dir):
     fig.savefig(os.path.join(export_folder, 'Re_%s_profiles_%s.png' %(theta,x_c)), dpi=200)
     plt.close()
 
-def plot_magnitude(V, x, z, x_c, magnitude, export_dir=None):
+def plot_magnitude(Y, x, z, x_c, magnitude, export_dir=None):
     '''
-    Function to plot the evolution of one component of the velocity at the boundary layer region
-    :param V: (array) component to be plotted
+    Function to plot the evolution of a flow magnitude in the boundary layer region
+    :param Y: (array) magnitude to be plotted
     :param x: (str) longitudinal (chordwise) position where to plot
     :param z: (array) segment along which to plot the V-component
     :param x_c: (str) chord segment
@@ -225,15 +225,15 @@ def plot_magnitude(V, x, z, x_c, magnitude, export_dir=None):
     os.makedirs(export_folder)
 
     plt.ioff()
-    for i in range(V.shape[1]):
+    for i in range(Y.shape[1]):
         fig, ax = plt.subplots()
         ax.set_ylabel('$z\,$(m)')
         ax.set_xlabel('$%s\,$' %magnitude)
-        ax.plot(V[:,i],z[:,i],'b')
+        ax.plot(Y[:,i],z[:,i],'b')
         ax.grid()
-        fig.suptitle('%s component evolution\n$x/c\,=\,$%s, chordwise coordinate $x\,=\,$%.4f'
+        fig.suptitle('%s evolution\n$x/c\,=\,$%s, chordwise coordinate $x\,=\,$%.3f'
                      %(magnitude,x_c,x[i]))
-        fig.savefig(os.path.join(export_folder, '%s_evolution_x_c=%s_x=%.2f.png' %(magnitude,x_c,x[i])), dpi=200)
+        fig.savefig(os.path.join(export_folder, '%s_evolution_x_c=%s_x=%.3f.png' %(magnitude,x_c,x[i])), dpi=200)
         plt.close()
 
 def plot_BL_velocity_profiles(casepath):
@@ -534,7 +534,7 @@ def generate_snapshot_grid(casepath, plane_segment_coords, grid_parameters):
         '''
         # Plot
         fig, ax = plt.subplots(2)
-        fig.suptitle('x/c = %.2f' % x_c)
+        fig.suptitle('x/c = %.2f' % x_c,fontsize=20)
         for j in range(Nx):
             ax[0].scatter(grid_points_up[:,0,j,i], grid_points_up[:,1,j,i])
             ax[1].scatter(grid_points_low[:,0,j,i], grid_points_low[:,1,j,i])
@@ -543,11 +543,10 @@ def generate_snapshot_grid(casepath, plane_segment_coords, grid_parameters):
         #ax[1].axis(ymin=0.2*min(grid_points_low[:,1,-1,i]),ymax=0)
         ax[1].scatter(xwall,zwall_low)
 
-        ax[1].set_xlabel('x (m)')
-        ax[0].set_ylabel('z (m)')
-        ax[1].set_ylabel('z (m)')
+        ax[1].set_xlabel('x (m)',fontsize=16)
+        ax[0].set_ylabel('z (m)',fontsize=16)
+        ax[1].set_ylabel('z (m)',fontsize=16)
         '''
-        print()
 
 def generate_snapshot_data(casepath, variables, dymform='ND'):
     '''
@@ -789,7 +788,6 @@ def compute_BL_thickness(casepath, reference_data=False, plot=True):
                     ax[1].set_ylabel('delta (m)')
                     ax[1].set_xlabel('x/c')
 
-                    print()
                 plt.tight_layout()
                 fig.savefig(os.path.join(export_folder, '%s_delta_thickness_%s.png' %(side,x_c)), dpi=200)
 
@@ -957,12 +955,10 @@ def compute_Euler_freestream_conditions(casepath):
             csvname = os.path.join(rhoe_folder,'rhoe_%s.csv' %x_c)
             rhoe_df.to_csv(csvname,index=False,sep=',',decimal='.')
 
-        print()
-
 #################################################### INPUTS ############################################################
 
 cases = {
-    'NLF0416_M03': r'C:\Users\BL_transition\Cases\NLF0416_M03_A203',
+    'NLF0416_M03': r'C:\Users\juan.ramos\Altran\Proyectos\Transition\BL_transition\Cases\NLF0416_M03_A203',
 }
 
 
@@ -1018,10 +1014,10 @@ Re_cr = {
 }
 
 for (ID, casepath) in cases.items():
-    generate_snapshot_grid(casepath,plane_segment_coords,grid_parameters)
-    generate_snapshot_data(casepath,variables=snapshot_variables,dymform='D')
-    compute_BL_thickness(casepath,reference_data=False,plot=True)
-    compute_transition(casepath,freestream_conditions,Re_cr)
-    plot_BL_velocity_profiles(casepath)
-    plot_BL_scalar_profiles(casepath,'T')
+    #generate_snapshot_grid(casepath,plane_segment_coords,grid_parameters)
+    #generate_snapshot_data(casepath,variables=snapshot_variables,dymform='D')
+    #compute_BL_thickness(casepath,reference_data=False,plot=True)
+    #compute_transition(casepath,freestream_conditions,Re_cr)
+    #plot_BL_velocity_profiles(casepath)
+    #plot_BL_scalar_profiles(casepath,'T')
     plot_BL_scalar_profiles(casepath,'P')
