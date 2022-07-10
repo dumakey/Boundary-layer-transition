@@ -751,7 +751,6 @@ grid_parameters = {
 
 for (ID, case) in cases.items():
     DMD_analyzer = DMD_scanner(case,grid_parameters,dmd_parameters)
-    #DMD_analyzer.generate_snapshot_grid()
-    #DMD_analyzer.generate_snapshot_data(dymform='D')
+    DMD_analyzer.generate_snapshot_grid()
+    DMD_analyzer.generate_snapshot_data(dymform='D')
     DMD_analyzer.dmd_analysis(export=True)
-    print()
