@@ -712,8 +712,6 @@ class DMD_scanner:
                           computation='pydmd',export=True,export_dir=export_dir)
                 self.plot_eigs(eigs=self.lambda_list_pydmd,eigs_ref=reference_data['physical'],xc_segment=x_c,eig_type='lambda',
                           computation='pydmd',dx=ds,export=True,export_dir=export_dir)
-    
-                print()
 
 ## -------------------------------------------------- INPUTS -------------------------------------------------------- ##
 cases = {
