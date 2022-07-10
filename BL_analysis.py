@@ -958,7 +958,7 @@ def compute_Euler_freestream_conditions(casepath):
 #################################################### INPUTS ############################################################
 
 cases = {
-    'NLF0416_M03': r'C:\Users\juan.ramos\Altran\Proyectos\Transition\BL_transition\Cases\NLF0416_M03_A203',
+    'NLF0416_M03': r'C:\Users\Transition\BL_transition\Cases\NLF0416_M03_A203',
 }
 
 
