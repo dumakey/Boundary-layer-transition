@@ -14,7 +14,7 @@ import scipy.integrate as integrate
 from scipy.optimize import fsolve
 from scipy.linalg import svdvals
 from pydmd import DMD
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 
 class DMD_scanner:
     '''
@@ -281,13 +281,13 @@ class DMD_scanner:
 
             fig_title = 'Eigenvalues in the unit circle'
 
-        ax.set_ylabel(ylabel)
-        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel,fontsize=12)
+        ax.set_xlabel(xlabel,fontsize=12)
         ax.set_ylim(ylim)
         ax.set_xlim(xlim)
         ax.grid()
         plt.legend()
-        fig.suptitle('%s, %s extraction\nSegment x/c: %s' % (fig_title,computation,xc_segment))
+        fig.suptitle('%s, %s extraction\nSegment x/c: %s' % (fig_title,computation,xc_segment),fontsize=12)
         if export:
             fig.savefig(os.path.join(export_dir, '%s_%s_eigenvalues_%s.png' %(xc_segment,eig_type,computation)), dpi=200)
 
@@ -455,20 +455,22 @@ class DMD_scanner:
             '''
             # Plot
             fig, ax = plt.subplots(2)
-            fig.suptitle('x/c = %.2f' % x_c)
+            fig.suptitle('x/c = %.2f' % x_c,fontsize=20)
             for j in range(Nx):
-                ax[0].scatter(grid_points_up[:,0,j,i], grid_points_up[:,1,j,i])
-                ax[1].scatter(grid_points_low[:,0,j,i], grid_points_low[:,1,j,i])
-            ax[0].scatter(xwall,zwall_up)
+                ax[0].scatter(grid_points_up[:,0,j,i], grid_points_up[:,1,j,i],color='r')
+                ax[1].scatter(grid_points_low[:,0,j,i], grid_points_low[:,1,j,i],color='r')
+            ax[0].plot(xwall,zwall_up)
             #ax[0].axis(ymin=0,ymax=0.2*max(grid_points_up[:,1,-1,i]))
             #ax[1].axis(ymin=0.2*min(grid_points_low[:,1,-1,i]),ymax=0)
-            ax[1].scatter(xwall,zwall_low)
+            ax[1].plot(xwall,zwall_low)
     
-            ax[1].set_xlabel('x (m)')
-            ax[0].set_ylabel('z (m)')
-            ax[1].set_ylabel('z (m)')
+            ax[1].set_xlabel('x (m)',fontsize=16)
+            ax[0].set_ylabel('z (m)',fontsize=16)
+            ax[1].set_ylabel('z (m)',fontsize=16)
+            ax[0].tick_params(axis='both',which='major',labelsize=16)
+            ax[1].tick_params(axis='both',which='major',labelsize=16)
+            print()
             '''
-
         print('Grid generated.')
 
     def generate_snapshot_data(self, dymform='ND'):
@@ -751,7 +753,7 @@ grid_parameters = {
 
 for (ID, case) in cases.items():
     DMD_analyzer = DMD_scanner(case,grid_parameters,dmd_parameters)
-    DMD_analyzer.generate_snapshot_grid()
-    DMD_analyzer.generate_snapshot_data(dymform='D')
+    #DMD_analyzer.generate_snapshot_grid()
+    #DMD_analyzer.generate_snapshot_data(dymform='D')
     DMD_analyzer.dmd_analysis(export=True)
     # esto es una prueba para el merge
