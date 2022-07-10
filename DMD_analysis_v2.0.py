@@ -17,7 +17,16 @@ from pydmd import DMD
 matplotlib.use('Agg')
 
 class DMD_scanner:
+<<<<<<< HEAD
 
+=======
+    '''
+    Class to perform a DMD analysis: extraction of eigenvalues
+    :param case: (dict) dictionary containing the paths of the case and reference cases to be analysed
+    :param grid_parameters: (dict) parameters that define the DMD grid
+    :param dmd_parameters: (dict) parameters relative to the DMD analysis
+    '''
+>>>>>>> test_branch
     def __init__(self, case, grid_parameters, dmd_parameters):
         self.casepath = case['casepath']
         self.reference_data_case = case['reference_case_path']
@@ -28,7 +37,16 @@ class DMD_scanner:
         self.grid_parameters = grid_parameters
 
     def filter_nan(self, X, *args):
+<<<<<<< HEAD
 
+=======
+        '''
+        Method to filter a array off NaN values
+        :param X: (array) array to filter
+        :param args: (array) additional array from which the same filtered columns from X are taken
+        :return: (array) filtered array(s)
+        '''
+>>>>>>> test_branch
         n, m = X.shape
 
         # Column filtering
@@ -56,7 +74,15 @@ class DMD_scanner:
             return X_filt
 
     def read_geometry(self, filepath):
+<<<<<<< HEAD
 
+=======
+        '''
+        Method to read the geometry (contours) of the airfoil to be analysed
+        :param filepath: (str) directory path where the coordinates file is storaged
+        :return: (arrays) coordinates of the airfoil contours, both upper and lower side
+        '''
+>>>>>>> test_branch
         geodata = pd.read_csv(filepath)
 
         xLE = geodata['Points_0'][0]
@@ -80,6 +106,7 @@ class DMD_scanner:
         return xup, zup, xlow, zlow, y, nxup, nzup, nxlow, nzlow
 
     def read_forces_breakdown_file(self, filepath):
+<<<<<<< HEAD
 
             print('Reading forces breakdown file...')
 
@@ -323,6 +350,130 @@ class DMD_scanner:
                 plot_BL_profile(p_filt,x_filt,z,x_c,variable,export_folder)
 
     def plot_eigs(self, eigs, eigs_ref, xc_segment, eig_type=None, computation=None, dx=1.0, export=False, export_dir=None):
+=======
+        '''
+        Method to scan the forces breakdown file (SU2 format) to gather data about the case to be analysed
+        :param filepath: (str) directory path where the file is located
+        :return: (dict) dictionary where all the relevant data is storaged
+        '''
+
+        print('Reading forces breakdown file...')
+
+        with open(filepath,'r') as f:
+            data = f.read()
+
+        casedata ={'FS': dict.fromkeys(['AOA','Re','Mach','Pinf','Tinf','Rhoinf','muinf','Tt','Pt'],None),
+                   'REF': dict.fromkeys(['Pref','Tref','Rhoref','muref','vref','Sref','Lref'],None),
+                   'SOLVER': None,
+                   'DIM_FORMULATION': None,
+                   }
+
+        ## FREESTREAM PARAMETERS ##
+        match = re.search('Mach number:\s*(\d\.*\d*).', data)
+        if match:
+            casedata['FS']['Minf'] = float(match.group(1))
+
+        match = re.search('Angle of attack \(AoA\):\s*(\d*)', data)
+        if match:
+            casedata['FS']['AOA'] = radians(float(match.group(1)))
+
+        match = re.search('Reynolds number:\s*(\d+\.*\d+([e|E]\+*\d*)?).', data)
+        if match:
+            casedata['FS']['Re'] = float(match.group(1))
+
+        match = re.search('Free-stream static pressure:\s*(\d+\.*\d*)', data)
+        if match:
+            casedata['FS']['Pinf'] = float(match.group(1))
+
+        match = re.search('Free-stream temperature:\s*(\d+\.*\d*)', data)
+        if match:
+            casedata['FS']['Tinf'] = float(match.group(1))
+
+        match = re.search('Free-stream density:\s*(\d+\.*\d*)', data)
+        if match:
+            casedata['FS']['Rhoinf'] = float(match.group(1))
+
+        match = re.search('Free-stream viscosity:\s*(\d+\.*\d+([e|E]\-\d*)?)', data)
+        if match:
+            casedata['FS']['muinf'] = float(match.group(1))
+
+        match = re.search('Free-stream total pressure:\s*(\d+\.*\d*)', data)
+        if match:
+            casedata['FS']['Pt'] = float(match.group(1))
+
+        match = re.search('Free-stream total temperature:\s*(\d+\.*\d*)', data)
+        if match:
+            casedata['FS']['Tt'] = float(match.group(1))
+
+        ## REFERENCE PARAMETERS ##
+        match = re.search('The reference area is (\d+\.*\d*)', data)
+        if match:
+            casedata['REF']['Sref'] = float(match.group(1))
+
+        match = re.search('The reference length is (\d+\.*\d*)', data)
+        if match:
+            casedata['REF']['Lref'] = float(match.group(1))
+
+        match = re.search('Reference pressure:\s*(\d+\.*\d*)', data)
+        if match:
+            casedata['REF']['Pref'] = float(match.group(1))
+
+        match = re.search('Reference temperature:\s*(\d+\.*\d*)', data)
+        if match:
+            casedata['REF']['Tref'] = float(match.group(1))
+
+        match = re.search('Reference density:\s*(\d+\.*\d*)', data)
+        if match:
+            casedata['REF']['Rhoref'] = float(match.group(1))
+
+        match = re.search('Reference viscosity:\s*(\d+\.*\d+([e|E]\-\d*)?)', data)
+        if match:
+            casedata['REF']['muref'] = float(match.group(1))
+
+        match = re.search('Reference velocity:\s*(\d+\.*\d*)', data)
+        if match:
+            casedata['REF']['vref'] = float(match.group(1))
+
+        match = re.search('Turbulence model:\s*(\w+)', data)
+        if match:
+            casedata['SOLVER'] = 'Viscous'
+
+        match = re.search('Compressible Euler equations', data)
+        if match:
+            casedata['SOLVER'] = 'Inviscid'
+
+        match = re.search('Non-Dimensional simulation \((.*)\s*at the farfield\)', data)
+        if match:
+            casedata['DIM_FORMULATION'] = 'NDIM'
+        else:
+            casedata['DIM_FORMULATION'] = 'DIM'
+        '''        
+            nondim_ref_magnitudes = match.group(1).replace(' ','').split(',')
+            if 'P=1.0' in nondim_ref_magnitudes:
+                casedata['DIM_FORMULATION'] = 'PRESS_EQ_ONE'
+            elif 'V=1.0' in nondim_ref_magnitudes:
+                casedata['DIM_FORMULATION'] = 'VEL_EQ_ONE'
+            elif 'V=Mach' in nondim_ref_magnitudes:
+                casedata['DIM_FORMULATION'] = 'VEL_EQ_MACH'
+            '''
+
+        print('Forces breakdown file read.')
+
+        return casedata
+
+    def plot_eigs(self, eigs, eigs_ref, xc_segment, eig_type=None, computation=None, dx=1.0, export=False, export_dir=None):
+        '''
+        Method to plot the eigenvalues extracted by DMD methods
+        :param eigs: (list) collection of the eigenvalues extracted at a chord segment
+        :param eigs_ref: (array) collection of eigenvalues computed for a validation/reference case
+        :param xc_segment: (str) chordwise direction segment of analysis
+        :param eig_type: (str) type of eigenvalue: physical (lambda) or eigenvalue in the unit circle (mu)
+        :param computation: (str) method of extraction
+        :param dx: (str) snapshot spacing
+        :param export: (bool) boolean to activate plot storage
+        :param export_dir: (str) storage directory path
+        '''
+>>>>>>> test_branch
 
         if computation == 'pydmd':
             c = 'b'
@@ -400,12 +551,16 @@ class DMD_scanner:
 
     def generate_snapshot_grid(self):
         '''
+<<<<<<< HEAD
         Function to generate the mesh of points where to interpolate the solution
 
         :param casepath: link to the folder where the case files are located
         :param plane_segment_coords: chordwise division into segments
         :param grid_parameters: boundary layer parameters
 
+=======
+        Method to generate the mesh of points where to interpolate the solution
+>>>>>>> test_branch
         '''
         # Set parameters
         Nsegment = len(self.analysis_segments)  # choordwise number of segments
@@ -585,10 +740,16 @@ class DMD_scanner:
 
     def generate_snapshot_data(self, dymform='ND'):
         '''
+<<<<<<< HEAD
         Function to interpolate the solution at the grid of points generated with function "generate_grid_points"
         :param casepath: link to the folder where the case files are located
         :param variables: variables to interpolate
         :param dymform: string to specify whether to express the variables in their dimensional ('D') or dimensionless ('ND')
+=======
+        Method to interpolate the solution at the grid of points generated with function "generate_grid_points"
+
+        :param dymform: (str) parameter to specify whether to express the variables in their dimensional ('D') or dimensionless ('ND')
+>>>>>>> test_branch
         form
 
         '''
@@ -691,11 +852,23 @@ class DMD_scanner:
 
         print('Data structuring finished.')
 
+<<<<<<< HEAD
 
     def dmd_analysis(self, export=False, compute_time_evolution=False):
 
         print('-- DMD analysis --')
 
+=======
+    def dmd_analysis(self, export=False, compute_time_evolution=False):
+        '''
+        Method to perform the extraction of eigenvalues by DMD methods
+        :param export: (bool) parameter to activate plots storage
+        :param compute_time_evolution: (bool) parameter to activate the time evolution reconstruction from the extracted
+        eigenvalues
+        '''
+
+        print('Beginning DMD analysis...')
+>>>>>>> test_branch
         # Read data from reference case
         reference_data_files = [file for file in os.listdir(self.reference_data_case) if file.endswith('.dat')]
         reference_data = {'circle':None, 'physical': None}
@@ -717,7 +890,10 @@ class DMD_scanner:
         # Read snapshots
         snapshots_data_dir = os.path.join(self.casepath,'Postprocessing','Bl_analysis','snapshots_structured')
         sides = os.listdir(snapshots_data_dir)
+<<<<<<< HEAD
         print('Beginning to scan data...')
+=======
+>>>>>>> test_branch
         for side in sides:
             print('--- Airfoil side: ' + side)
             snapshot_data_segments_dir = os.listdir(os.path.join(snapshots_data_dir, side))
@@ -864,6 +1040,9 @@ for (ID, case) in cases.items():
     #DMD_analyzer.generate_snapshot_grid()
     #DMD_analyzer.generate_snapshot_data(dymform='D')
     DMD_analyzer.dmd_analysis(export=True)
+<<<<<<< HEAD
     #plot_BL_velocity_profiles()
 
+=======
+>>>>>>> test_branch
     print()
